@@ -167,7 +167,7 @@ if dataframes:
         .reset_index()
     )
 
-    fig = px.bar(
+    fig = px.line(
         chart_data,
         x='post_datetime',
         y='KWh',

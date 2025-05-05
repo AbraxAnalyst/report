@@ -150,69 +150,34 @@ if dataframes:
                 delta=row['% of Total']
             )
 
-# --- Line Chart with High/Low ---
-                # --- Line Chart: KWh Over Time by Source with High & Low Points ---
-        st.subheader("📈 Line Chart: KWh Over Time by Source (High & Low Indicators)")
-
-        # Prepare data: Resample KWh every 5 minutes and group by source
-        chart_data = (
-            combined_df
-            .set_index('post_datetime')
-            .groupby('source')['KWh']
-            .resample('5T')
-            .sum()
-            .reset_index()
-        )
-
-        # Create base line chart
-        fig = px.line(
-            chart_data,
-            x='post_datetime',
-            y='KWh',
-            color='source',
-            title="KWh by Source Over Time",
-            labels={'post_datetime': 'Time', 'KWh': 'Energy (KWh)'}
-        )
-
-        # Add high and low markers per source
-        for source in chart_data['source'].unique():
-            source_data = chart_data[chart_data['source'] == source]
-            
-            # Get high and low points
-            max_point = source_data.loc[source_data['KWh'].idxmax()]
-            min_point = source_data.loc[source_data['KWh'].idxmin()]
-            
-            # High point
-            fig.add_scatter(
-                x=[max_point['post_datetime']],
-                y=[max_point['KWh']],
-                mode='markers+text',
-                marker=dict(size=10, color='green', symbol='circle'),
-                text=["High"],
-                textposition="top center",
-                name=f"{source} High"
-            )
-
-            # Low point
-            fig.add_scatter(
-                x=[min_point['post_datetime']],
-                y=[min_point['KWh']],
-                mode='markers+text',
-                marker=dict(size=10, color='red', symbol='circle'),
-                text=["Low"],
-                textposition="bottom center",
-                name=f"{source} Low"
-            )
-
-        fig.update_layout(
-            xaxis_title='Time',
-            yaxis_title='Energy (KWh)',
-            legend_title='Source'
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
 
 
+
+
+
+    # --- Stacked Bar Chart ---
+    st.subheader("📊 Stacked Bar Chart: KWh Over Time by Source")
+
+    chart_data = (
+        combined_df
+        .set_index('post_datetime')
+        .groupby('source')['KWh']
+        .resample('5T')
+        .sum()
+        .reset_index()
+    )
+
+    fig = px.bar(
+        chart_data,
+        x='post_datetime',
+        y='KWh',
+        color='source',
+        title="KWh by Source Over Time",
+        labels={'post_datetime': 'Time', 'KWh': 'Energy (KWh)'},
+        barmode='stack'
+    )
+    fig.update_layout(xaxis_title='Time', yaxis_title='Energy (KWh)', legend_title='Source')
+    st.plotly_chart(fig, use_container_width=True)
 
     # --- Download Button ---
     st.download_button(

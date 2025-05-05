@@ -150,65 +150,60 @@ if dataframes:
                 delta=row['% of Total']
             )
 
-
 # --- Line Chart with High/Low ---
-st.subheader("📈 Line Chart: KWh Over Time by Source (Highlighting High & Low)")
+        st.subheader("📈 Line Chart: KWh Over Time by Source (Highlighting High & Low)")
 
-# Prepare data
-chart_data = (
-    combined_df
-    .set_index('post_datetime')
-    .groupby('source')['KWh']
-    .resample('5T')
-    .sum()
-    .reset_index()
-)
+        # Prepare data
+        chart_data = (
+            combined_df
+            .set_index('post_datetime')
+            .groupby('source')['KWh']
+            .resample('5T')
+            .sum()
+            .reset_index()
+        )
 
-# Create line chart
-fig = px.line(
-    chart_data,
-    x='post_datetime',
-    y='KWh',
-    color='source',
-    title="KWh by Source Over Time",
-    labels={'post_datetime': 'Time', 'KWh': 'Energy (KWh)'}
-)
-
-# Add high/low markers per source
-for source in chart_data['source'].unique():
-    source_data = chart_data[chart_data['source'] == source]
-    max_row = source_data.loc[source_data['KWh'].idxmax()]
-    min_row = source_data.loc[source_data['KWh'].idxmin()]
-
-    # Add highest value marker
-    fig.add_scatter(
-        x=[max_row['post_datetime']],
-        y=[max_row['KWh']],
-        mode='markers+text',
-        marker=dict(size=10, color='green'),
-        text=["🔺 High"],
-        textposition="top center",
-        name=f"{source} High"
-    )
-
-    # Add lowest value marker
-    fig.add_scatter(
-        x=[min_row['post_datetime']],
-        y=[min_row['KWh']],
-        mode='markers+text',
-        marker=dict(size=10, color='red'),
-        text=["🔻 Low"],
-        textposition="bottom center",
-        name=f"{source} Low"
-    )
-
-fig.update_layout(xaxis_title='Time', yaxis_title='Energy (KWh)', legend_title='Source')
-st.plotly_chart(fig, use_container_width=True)
-
-
-
-
+        # Create line chart
+        fig = px.line(
+            chart_data,
+            x='post_datetime',
+            y='KWh',
+            color='source',
+            title="KWh by Source Over Time",
+            labels={'post_datetime': 'Time', 'KWh': 'Energy (KWh)'}
+        )
     
+        # Add high/low markers per source
+        for source in chart_data['source'].unique():
+            source_data = chart_data[chart_data['source'] == source]
+            max_row = source_data.loc[source_data['KWh'].idxmax()]
+            min_row = source_data.loc[source_data['KWh'].idxmin()]
+
+        # Add highest value marker
+            fig.add_scatter(
+                x=[max_row['post_datetime']],
+                y=[max_row['KWh']],
+                mode='markers+text',
+                marker=dict(size=10, color='green'),
+                text=["🔺 High"],
+                textposition="top center",
+                name=f"{source} High"
+            )
+
+            # Add lowest value marker
+            fig.add_scatter(
+                x=[min_row['post_datetime']],
+                y=[min_row['KWh']],
+                mode='markers+text',
+                marker=dict(size=10, color='red'),
+                text=["🔻 Low"],
+                textposition="bottom center",
+                name=f"{source} Low"
+            )
+
+    fig.update_layout(xaxis_title='Time', yaxis_title='Energy (KWh)', legend_title='Source')
+    st.plotly_chart(fig, use_container_width=True)
+
 
     # --- Download Button ---
     st.download_button(

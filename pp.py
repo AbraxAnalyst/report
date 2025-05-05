@@ -129,7 +129,7 @@ if dataframes:
     
     
     
-    st.subheader("💵 Estimated Cost Summary Utility:209.50/KW, Fuel: 1000/Liter")
+    st.subheader("💵 Estimated Cost Summary Utility: 209.50/KW, Fuel: 1000/Liter")
 
     cost_summary = (
         combined_df.groupby('source')['cost_ngn']
@@ -153,9 +153,7 @@ if dataframes:
 
 
 
-
-
-    # --- Stacked Bar Chart ---
+   # --- Stacked Bar Chart ---
     st.subheader("📊 Stacked Bar Chart: KWh Over Time by Source")
 
     chart_data = (
@@ -177,7 +175,7 @@ if dataframes:
         barmode='stack'
     )
     fig.update_layout(xaxis_title='Time', yaxis_title='Energy (KWh)', legend_title='Source')
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True) 
 
     # --- Download Button ---
     st.download_button(
